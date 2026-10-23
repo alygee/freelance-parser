@@ -1,6 +1,7 @@
 from freelance_parser.filters import KeywordFilter
 from freelance_parser.main import poll_once
 from freelance_parser.models import Order
+from freelance_parser.sources.kwork import KworkSource
 from freelance_parser.sources.rss import RssSource
 from freelance_parser.storage import Storage
 
@@ -61,3 +62,15 @@ async def test_poll_once_sends_only_new_matching(tmp_path):
     await poll_once([FakeSource()], matches, storage, notifier)
     await poll_once([FakeSource()], matches, storage, notifier)
     assert notifier.sent == ["Telegram-бот на Python"]
+
+
+KWORK_HTML = """<html><script>window.stateData = {"wantsListData": {"wants": [
+{"id": 42, "name": "Парсер сайта", "description": "Нужен скрипт", "priceLimit": "500.00", "possiblePriceLimit": "1500"}
+]}};</script></html>"""
+
+
+def test_kwork_parse():
+    [order] = KworkSource("", None).parse(KWORK_HTML)
+    assert order.id == "42"
+    assert order.url == "https://kwork.ru/projects/42"
+    assert order.budget == "до 500 ₽ (допустимо до 1500 ₽)"

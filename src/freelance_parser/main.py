@@ -6,7 +6,7 @@ import httpx
 from .config import Settings
 from .filters import KeywordFilter
 from .notifier import TelegramNotifier
-from .sources import RssSource, Source
+from .sources import KworkSource, RssSource, Source
 from .storage import Storage
 
 log = logging.getLogger("freelance_parser")
@@ -16,7 +16,7 @@ async def poll_once(sources: list[Source], matches, storage: Storage, notifier) 
     for source in sources:
         try:
             orders = await source.fetch()
-        except httpx.HTTPError as e:
+        except (httpx.HTTPError, ValueError) as e:
             log.warning("%s: ошибка загрузки: %s", source.name, e)
             continue
         for order in orders:
@@ -32,6 +32,8 @@ async def main() -> None:
     matches = KeywordFilter(settings.keywords, settings.stop_words)
     async with httpx.AsyncClient(timeout=20, follow_redirects=True) as client:
         sources = [RssSource(name, url, client) for name, url in settings.rss_feeds.items()]
+        if settings.kwork_url:
+            sources.append(KworkSource(settings.kwork_url, client))
         notifier = None
         if settings.bot_token and settings.chat_id:
             notifier = TelegramNotifier(settings.bot_token, settings.chat_id, client)

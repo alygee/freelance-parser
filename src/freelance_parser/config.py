@@ -17,6 +17,7 @@ class Settings:
     keywords: list[str]
     stop_words: list[str]
     rss_feeds: dict[str, str]
+    kwork_url: str
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -33,4 +34,5 @@ class Settings:
             keywords=_split(os.getenv("KEYWORDS", "")),
             stop_words=_split(os.getenv("STOP_WORDS", "")),
             rss_feeds=feeds,
+            kwork_url=os.getenv("KWORK_URL", ""),
         )
