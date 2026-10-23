@@ -22,6 +22,14 @@ def test_filter_keywords_and_stop_words():
     assert not f(make("Логотип для кафе"))
 
 
+def test_filter_matches_word_start_only():
+    f = KeywordFilter(["бот"], ["1с"])
+    assert f(make("Определение ботов поисковиков"))
+    assert not f(make("Разработка HMI-интерфейса на C++"))
+    assert f(make("Бот для заказа 21с"))
+    assert not f(make("Бот для 1С"))
+
+
 def test_storage_dedup(tmp_path):
     s = Storage(str(tmp_path / "t.db"))
     assert s.add_if_new(make("a"))
