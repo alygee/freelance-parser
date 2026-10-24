@@ -4,6 +4,8 @@ services:
     env_file: .env
     environment:
       DB_PATH: /data/orders.db
+      PROFILE_PATH: /app/profile.txt
     volumes:
       - ./data:/data
+      - ./profile.txt:/app/profile.txt:ro
     restart: unless-stopped

@@ -1,0 +1,9 @@
+.git
+.venv
+.env
+*.db
+data
+resume.txt
+profile.txt
+__pycache__
+.pytest_cache
