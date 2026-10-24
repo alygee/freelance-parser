@@ -1,0 +1,6 @@
+Разработчик с 9+ годами коммерческого опыта, сейчас перехожу в Python и ML.
+Основной опыт — frontend (React, TypeScript): сложные data-heavy интерфейсы, таблицы, дашборды, картографические GIS-системы, оптимизация производительности, руководство командой.
+Backend: Kotlin (Spring Boot) и Node.js (NestJS, Express) — REST API, интеграция множества источников данных, PostgreSQL (в т.ч. оптимизация запросов), ранее PHP (Laravel, WordPress, Magento).
+DevOps: Docker, Kubernetes, GitLab CI/CD.
+Python: пишу собственные проекты, например бота, который собирает заказы с фриланс-бирж (httpx, asyncio, SQLite, Telegram Bot API, тесты на pytest).
+Образование: радиофизика (ОмГУ) — хорошая математическая база для ML.

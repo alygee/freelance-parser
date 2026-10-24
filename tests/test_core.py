@@ -1,6 +1,9 @@
+import httpx
+
 from freelance_parser.filters import KeywordFilter
 from freelance_parser.main import poll_once
 from freelance_parser.models import Order
+from freelance_parser.notifier import TelegramNotifier
 from freelance_parser.sources.kwork import KworkSource
 from freelance_parser.sources.rss import RssSource
 from freelance_parser.storage import Storage
@@ -53,7 +56,7 @@ async def test_poll_once_sends_only_new_matching(tmp_path):
     class FakeNotifier:
         sent = []
 
-        async def send(self, order):
+        async def send(self, order, draft=""):
             self.sent.append(order.title)
 
     notifier = FakeNotifier()
@@ -74,3 +77,36 @@ def test_kwork_parse():
     assert order.id == "42"
     assert order.url == "https://kwork.ru/projects/42"
     assert order.budget == "до 500 ₽ (допустимо до 1500 ₽)"
+
+
+async def test_poll_once_attaches_draft_and_survives_drafter_errors(tmp_path):
+    class FakeSource:
+        name = "fake"
+
+        async def fetch(self):
+            return RssSource("fake", "", None).parse(RSS)
+
+    class FakeNotifier:
+        sent = []
+
+        async def send(self, order, draft=""):
+            self.sent.append(draft)
+
+    class FakeDrafter:
+        calls = 0
+
+        async def draft(self, order):
+            self.calls += 1
+            if self.calls == 1:
+                return "Готов взяться"
+            raise httpx.ConnectError("нет сети")
+
+    notifier = FakeNotifier()
+    matches = KeywordFilter([], [])
+    await poll_once([FakeSource()], matches, Storage(str(tmp_path / "t.db")), notifier, FakeDrafter())
+    assert notifier.sent == ["Готов взяться", ""]
+
+
+def test_format_escapes_draft():
+    text = TelegramNotifier.format(make("Заказ"), "<script> & план")
+    assert "&lt;script&gt; &amp; план" in text

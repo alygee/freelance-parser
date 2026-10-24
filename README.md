@@ -22,6 +22,9 @@ uv run freelance-parser
 | `KEYWORDS` | ключевые слова через запятую |
 | `STOP_WORDS` | минус-слова |
 | `RSS_FEEDS` | источники в формате `имя=url,имя2=url2` |
+| `OPENAI_API_KEY` | ключ OpenAI API; если задан, к заказу в Telegram добавляется черновик отклика |
+| `OPENAI_MODEL` | модель для черновиков, по умолчанию `gpt-5-mini` |
+| `PROFILE_PATH` | файл с описанием вашего опыта для черновиков (пример — `profile.example.txt`) |
 | `KWORK_URL` | страница проектов Kwork с нужной категорией; пусто — Kwork отключён |
 | `POLL_INTERVAL` | интервал опроса в секундах |
 
