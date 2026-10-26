@@ -6,6 +6,7 @@ from freelance_parser.models import Order
 from freelance_parser.notifier import TelegramNotifier
 from freelance_parser.sources.freelancer import FreelancerSource
 from freelance_parser.sources.kwork import KworkSource
+from freelance_parser.sources.reddit import RedditSource
 from freelance_parser.sources.rss import RssSource
 from freelance_parser.storage import Storage
 
@@ -86,6 +87,19 @@ FREELANCER_JSON = {"status": "success", "result": {"projects": [
     {"id": 8, "title": "ML help", "seo_url": "ml/ML-help", "type": "hourly",
      "currency": {"sign": "€", "code": "EUR"}, "budget": {"minimum": 10.0, "maximum": None}},
 ]}}
+
+
+REDDIT = """<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom">
+<entry><id>t3_a</id><title>[Hiring] Python scraper</title><link href="https://www.reddit.com/r/forhire/comments/a/"/></entry>
+<entry><id>t3_b</id><title>[For Hire] Python dev</title><link href="https://www.reddit.com/r/forhire/comments/b/"/></entry>
+<entry><id>t3_c</id><title>[HIRING] FastAPI backend</title><link href="https://www.reddit.com/r/forhire/comments/c/"/></entry>
+</feed>""".encode()
+
+
+def test_reddit_keeps_only_hiring_posts():
+    orders = RedditSource("", None).parse(REDDIT)
+    assert [o.id for o in orders] == ["t3_a", "t3_c"]
+    assert orders[0].source == "reddit"
 
 
 def test_freelancer_parse():

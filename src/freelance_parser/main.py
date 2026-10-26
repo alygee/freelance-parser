@@ -7,7 +7,7 @@ from .config import Settings
 from .drafter import OpenAIDrafter
 from .filters import KeywordFilter
 from .notifier import TelegramNotifier
-from .sources import FreelancerSource, KworkSource, RssSource, Source
+from .sources import FreelancerSource, KworkSource, RedditSource, RssSource, Source
 from .storage import Storage
 
 log = logging.getLogger("freelance_parser")
@@ -47,6 +47,8 @@ async def main() -> None:
             sources.append(KworkSource(settings.kwork_url, client))
         if settings.freelancer_url:
             sources.append(FreelancerSource(settings.freelancer_url, client))
+        if settings.reddit_url:
+            sources.append(RedditSource(settings.reddit_url, client))
         notifier = None
         if settings.bot_token and settings.chat_id:
             notifier = TelegramNotifier(settings.bot_token, settings.chat_id, client)
