@@ -1,4 +1,5 @@
 import httpx
+import pytest
 
 from freelance_parser.filters import KeywordFilter
 from freelance_parser.main import poll_once
@@ -7,6 +8,7 @@ from freelance_parser.notifier import TelegramNotifier
 from freelance_parser.sources.freelancer import FreelancerSource
 from freelance_parser.sources.kwork import KworkSource
 from freelance_parser.sources.reddit import RedditSource
+from freelance_parser.sources.weblancer import WeblancerSource
 from freelance_parser.sources.rss import RssSource
 from freelance_parser.storage import Storage
 
@@ -100,6 +102,30 @@ def test_reddit_keeps_only_hiring_posts():
     orders = RedditSource("", None).parse(REDDIT)
     assert [o.id for o in orders] == ["t3_a", "t3_c"]
     assert orders[0].source == "reddit"
+
+
+WEBLANCER_HTML = """<main>
+<article class="bg-white"><svg><path d="M0 0"></path></svg><div><h2 class="text-xl"><a class="link-style" href="/freelance/veb-programmirovanie-31/sait-na-laravel-1270001/">Сайт на Laravel &amp; Vue</a></h2>
+<span class="text-green-600 text-xl whitespace-nowrap">1000<!-- --> $</span></div>
+<p class="text-gray-600 flex-grow">Нужен <b>PHP</b>-разработчик</p><div><a href="/freelance/php/">PHP</a></div></article>
+<article class="bg-white"><div><h2 class="text-xl"><a class="link-style" href="/freelance/parsing-76/parser-1270002/">Парсер</a></h2></div>
+<p class="text-gray-600">Python-скрипт</p></article>
+</main>"""
+
+
+def test_weblancer_parse():
+    paid, free = WeblancerSource("", None).parse(WEBLANCER_HTML)
+    assert paid.id == "1270001"
+    assert paid.title == "Сайт на Laravel & Vue"
+    assert paid.url == "https://www.weblancer.net/freelance/veb-programmirovanie-31/sait-na-laravel-1270001/"
+    assert paid.description == "Нужен PHP-разработчик"
+    assert paid.budget == "1000 $"
+    assert free.budget == ""
+
+
+def test_weblancer_raises_on_unknown_markup():
+    with pytest.raises(ValueError):
+        WeblancerSource("", None).parse("<html></html>")
 
 
 def test_freelancer_parse():

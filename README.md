@@ -28,6 +28,7 @@ uv run freelance-parser
 | `KWORK_URL` | страница проектов Kwork с нужной категорией; пусто — Kwork отключён |
 | `FREELANCER_URL` | запрос к API Freelancer.com (`jobs[]=13` — Python, `292` — ML); пусто — отключён |
 | `REDDIT_URL` | RSS сабреддитов (`r/forhire+jobbit`), берутся только посты `[Hiring]`; пусто — отключён |
+| `WEBLANCER_URL` | страница заказов Weblancer (`/freelance/` или раздел с сайта); пусто — отключён |
 | `POLL_INTERVAL` | интервал опроса в секундах |
 
 ## Новый источник
