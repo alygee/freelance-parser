@@ -7,7 +7,7 @@ from .config import Settings
 from .drafter import OpenAIDrafter
 from .filters import KeywordFilter
 from .notifier import TelegramNotifier
-from .sources import KworkSource, RssSource, Source
+from .sources import FreelancerSource, KworkSource, RssSource, Source
 from .storage import Storage
 
 log = logging.getLogger("freelance_parser")
@@ -45,6 +45,8 @@ async def main() -> None:
         sources = [RssSource(name, url, client) for name, url in settings.rss_feeds.items()]
         if settings.kwork_url:
             sources.append(KworkSource(settings.kwork_url, client))
+        if settings.freelancer_url:
+            sources.append(FreelancerSource(settings.freelancer_url, client))
         notifier = None
         if settings.bot_token and settings.chat_id:
             notifier = TelegramNotifier(settings.bot_token, settings.chat_id, client)

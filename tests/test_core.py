@@ -4,6 +4,7 @@ from freelance_parser.filters import KeywordFilter
 from freelance_parser.main import poll_once
 from freelance_parser.models import Order
 from freelance_parser.notifier import TelegramNotifier
+from freelance_parser.sources.freelancer import FreelancerSource
 from freelance_parser.sources.kwork import KworkSource
 from freelance_parser.sources.rss import RssSource
 from freelance_parser.storage import Storage
@@ -77,6 +78,23 @@ def test_kwork_parse():
     assert order.id == "42"
     assert order.url == "https://kwork.ru/projects/42"
     assert order.budget == "до 500 ₽ (допустимо до 1500 ₽)"
+
+
+FREELANCER_JSON = {"status": "success", "result": {"projects": [
+    {"id": 7, "title": "Scrape prices", "seo_url": "python/Scrape-prices", "description": "Python script",
+     "type": "fixed", "currency": {"sign": "$", "code": "USD"}, "budget": {"minimum": 30.0, "maximum": 250.0}},
+    {"id": 8, "title": "ML help", "seo_url": "ml/ML-help", "type": "hourly",
+     "currency": {"sign": "€", "code": "EUR"}, "budget": {"minimum": 10.0, "maximum": None}},
+]}}
+
+
+def test_freelancer_parse():
+    fixed, hourly = FreelancerSource("", None).parse(FREELANCER_JSON)
+    assert fixed.id == "7"
+    assert fixed.url == "https://www.freelancer.com/projects/python/Scrape-prices"
+    assert fixed.description == "Python script"
+    assert fixed.budget == "$30–250 USD"
+    assert hourly.budget == "от €10 EUR/час"
 
 
 async def test_poll_once_attaches_draft_and_survives_drafter_errors(tmp_path):

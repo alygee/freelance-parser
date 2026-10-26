@@ -24,6 +24,7 @@ class Settings:
     stop_words: list[str]
     rss_feeds: dict[str, str]
     kwork_url: str
+    freelancer_url: str
     openai_api_key: str
     openai_model: str
     profile: str
@@ -44,6 +45,7 @@ class Settings:
             stop_words=_split(os.getenv("STOP_WORDS", "")),
             rss_feeds=feeds,
             kwork_url=os.getenv("KWORK_URL", ""),
+            freelancer_url=os.getenv("FREELANCER_URL", ""),
             openai_api_key=os.getenv("OPENAI_API_KEY", ""),
             openai_model=os.getenv("OPENAI_MODEL", "gpt-5-mini"),
             profile=_read(os.getenv("PROFILE_PATH", "profile.txt")),

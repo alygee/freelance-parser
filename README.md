@@ -26,6 +26,7 @@ uv run freelance-parser
 | `OPENAI_MODEL` | модель для черновиков, по умолчанию `gpt-5-mini` |
 | `PROFILE_PATH` | файл с описанием вашего опыта для черновиков (пример — `profile.example.txt`) |
 | `KWORK_URL` | страница проектов Kwork с нужной категорией; пусто — Kwork отключён |
+| `FREELANCER_URL` | запрос к API Freelancer.com (`jobs[]=13` — Python, `292` — ML); пусто — отключён |
 | `POLL_INTERVAL` | интервал опроса в секундах |
 
 ## Новый источник
